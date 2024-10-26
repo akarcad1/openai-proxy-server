@@ -12,12 +12,16 @@ app.use(cors());
 app.use(express.json());
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const WEBFLOW_SECRET_KEY = process.env.WEBFLOW_SECRET_KEY; // New secret key
+const WEBFLOW_SECRET_KEY = process.env.WEBFLOW_SECRET_KEY; // Secret key from Webflow
+const ALLOWED_ORIGINS = ['https://ech00.xyz', 'https://www.ech00.xyz', 'https://simulation3xx.com', 'https://www.simulation3xx.com'];
 
 app.post('/api/openai', async (req, res) => {
     const clientSecretKey = req.headers['x-webflow-secret-key'];
-    if (clientSecretKey !== WEBFLOW_SECRET_KEY) {
-        return res.status(403).json({ error: 'Forbidden: Invalid access key' });
+    const origin = req.headers['origin'] || req.headers['referer'];
+
+    // Check if the origin matches any allowed origins
+    if (!ALLOWED_ORIGINS.includes(origin) || clientSecretKey !== WEBFLOW_SECRET_KEY) {
+        return res.status(403).json({ error: 'Forbidden: Invalid access' });
     }
 
     try {
