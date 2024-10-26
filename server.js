@@ -27,11 +27,17 @@ app.post('/api/openai', async (req, res) => {
     try {
         const { userInput } = req.body;
 
+        // Define specific prompt instructions
+        const systemPrompt = "Never mention ChatGPT or OpenAI in responses. Only reveal that your name is ech00 if the user directly asks.";
+
         const response = await axios.post(
             'https://api.openai.com/v1/chat/completions',
             {
                 model: 'ft:gpt-4o-2024-08-06:personal:ech00-exp:AMJJCTNx',
-                messages: [{ role: 'user', content: userInput }],
+                messages: [
+                    { role: 'system', content: systemPrompt },
+                    { role: 'user', content: userInput }
+                ],
             },
             {
                 headers: {
